@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roleta Cassino</title>
+<title>Caça-Níquel</title>
 
 <style>
 body {
@@ -21,94 +21,91 @@ header {
     color: #00ff88;
 }
 
-.roleta {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    margin: 20px auto;
-    border: 5px solid #00ff88;
-    background: conic-gradient(
-        red 0deg 90deg,
-        black 90deg 180deg,
-        red 180deg 270deg,
-        black 270deg 360deg
-    );
-    transition: transform 3s ease-out;
+.slot {
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+}
+
+.reel {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ff88;
 }
 
 button {
-    padding: 12px 20px;
-    font-size: 16px;
-    margin: 5px;
+    padding: 15px 25px;
+    font-size: 18px;
     border-radius: 10px;
     border: none;
+    background: #00ff88;
     cursor: pointer;
 }
-
-.vermelho { background: red; color: white; }
-.preto { background: black; color: white; border: 1px solid white; }
-.girar { background: #00ff88; }
 
 </style>
 </head>
 
 <body>
 
-<header>🎰 Roleta Cassino</header>
+<header>🎰 Caça-Níquel</header>
 
 <p>Saldo: R$ <span id="saldo">100</span></p>
 
-<h3>Escolha sua aposta:</h3>
-<button class="vermelho" onclick="apostar('vermelho')">🔴 Vermelho</button>
-<button class="preto" onclick="apostar('preto')">⚫ Preto</button>
+<div class="slot">
+    <div class="reel" id="r1">🍒</div>
+    <div class="reel" id="r2">🍋</div>
+    <div class="reel" id="r3">⭐</div>
+</div>
 
-<div id="roleta" class="roleta"></div>
+<button onclick="girar()">🎮 Girar</button>
 
-<button class="girar" onclick="girar()">🎡 Girar</button>
-
-<p id="status"></p>
+<p id="resultado"></p>
 
 <script>
 let saldo = 100;
-let aposta = null;
-let girando = false;
-
-function apostar(cor) {
-    aposta = cor;
-    document.getElementById("status").innerText = "Apostou em: " + cor;
-}
+let simbolos = ["🍒","🍋","⭐","💎","7️⃣"];
 
 function girar() {
-    if (!aposta) {
-        alert("Escolha uma aposta!");
+    if (saldo <= 0) {
+        alert("Sem saldo!");
         return;
     }
 
-    if (girando) return;
+    saldo -= 10;
 
-    girando = true;
+    let r1 = document.getElementById("r1");
+    let r2 = document.getElementById("r2");
+    let r3 = document.getElementById("r3");
 
-    let roleta = document.getElementById("roleta");
-    let graus = 3600 + Math.floor(Math.random() * 360);
-    roleta.style.transform = "rotate(" + graus + "deg)";
+    let spins = 20;
 
-    setTimeout(() => {
-        let resultado = graus % 360;
-        let corResultado = (resultado < 90 || resultado > 270) ? "vermelho" : "preto";
+    let interval = setInterval(() => {
+        r1.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+        r2.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+        r3.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+        spins--;
+        
+        if (spins <= 0) {
+            clearInterval(interval);
 
-        if (corResultado === aposta) {
-            saldo += 50;
-            document.getElementById("status").innerText = "🎉 Você ganhou!";
-        } else {
-            saldo -= 30;
-            document.getElementById("status").innerText = "😢 Você perdeu!";
+            if (r1.innerText === r2.innerText && r2.innerText === r3.innerText) {
+                saldo += 100;
+                document.getElementById("resultado").innerText = "🎉 JACKPOT!";
+            } else {
+                document.getElementById("resultado").innerText = "😢 Tente novamente";
+            }
+
+            document.getElementById("saldo").innerText = saldo;
         }
 
-        document.getElementById("saldo").innerText = saldo;
-
-        aposta = null;
-        girando = false;
-    }, 3000);
+    }, 100);
 }
 </script>
 
