@@ -1,112 +1,186 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cassino com Roleta</title>
+<title>Golden Spin</title>
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial;
-    background: radial-gradient(circle, #0b1a0b, #000);
-    color: white;
-    text-align: center;
+  margin: 0;
+  background: linear-gradient(#0B0B0B, #1a1a1a);
+  color: #FFD700;
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
 
-header {
-    background: #111;
-    padding: 15px;
-    font-size: 22px;
-    color: #00ff88;
+h1 {
+  margin-top: 20px;
 }
 
-.container {
-    padding: 20px;
+#saldo {
+  font-size: 20px;
+  margin: 10px;
 }
 
-.roleta {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    margin: 20px auto;
-    border: 5px solid #00ff88;
-    background: conic-gradient(
-        red 0deg 90deg,
-        black 90deg 180deg,
-        red 180deg 270deg,
-        black 270deg 360deg
-    );
-    transition: transform 3s ease-out;
+#slot {
+  font-size: 60px;
+  margin: 30px;
 }
 
 button {
-    background: #00ff88;
-    border: none;
-    padding: 12px 25px;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
+  padding: 15px;
+  font-size: 18px;
+  margin: 5px;
+  border: none;
+  border-radius: 10px;
+  background: #FFD700;
+  color: black;
+  font-weight: bold;
 }
 
-.saldo {
-    font-size: 20px;
+button:hover {
+  background: #ffcc00;
 }
 
+#msg {
+  margin: 20px;
+  font-size: 18px;
+}
+
+.win {
+  animation: brilho 0.4s infinite alternate;
+}
+
+@keyframes brilho {
+  from { text-shadow: 0 0 10px gold; }
+  to { text-shadow: 0 0 30px yellow; }
+}
+
+#loja {
+  display: none;
+  background: #222;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+}
 </style>
 </head>
 
 <body>
 
-<header>🎰 Roleta Cassino</header>
+<h1>🎰 Golden Spin</h1>
 
-<div class="container">
+<div id="saldo">Saldo: 100</div>
 
-    <p class="saldo">Saldo: R$ <span id="saldo">100</span></p>
+<div id="slot">🍒 🍋 🍊</div>
 
-    <div id="roleta" class="roleta"></div>
+<button onclick="girar()">🎰 GIRAR</button>
+<br>
+<button onclick="abrirLoja()">💰 Comprar moedas</button>
 
-    <button onclick="girar()">🎡 Girar</button>
+<p id="msg"></p>
 
-    <p id="resultado"></p>
+<!-- LOJA -->
+<div id="loja">
+  <h2>Comprar moedas</h2>
 
+  <button onclick="comprar(50)">50 moedas - R$5</button><br><br>
+  <button onclick="comprar(100)">100 moedas - R$9</button><br><br>
+  <button onclick="comprar(500)">500 moedas - R$20</button><br><br>
+
+  <button onclick="fecharLoja()">Fechar</button>
 </div>
 
+<!-- SONS -->
+<audio id="spinSound" src="https://actions.google.com/sounds/v1/casino/slot_machine.ogg"></audio>
+<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+
 <script>
-let saldo = 100;
-let girando = false;
+let saldo = localStorage.getItem("saldo") || 100;
+saldo = parseInt(saldo);
+
+let aposta = 10;
+
+let itens = ["🍒","🍋","🍊","💎","7️⃣"];
+
+function atualizar() {
+  document.getElementById("saldo").innerText = "Saldo: " + saldo;
+}
+
+function salvar() {
+  localStorage.setItem("saldo", saldo);
+}
+
+function msg(t) {
+  document.getElementById("msg").innerText = t;
+}
 
 function girar() {
-    if (girando) return;
+  if (saldo < aposta) {
+    msg("Sem saldo!");
+    return;
+  }
 
-    girando = true;
+  document.getElementById("spinSound").play();
 
-    let roleta = document.getElementById("roleta");
+  saldo -= aposta;
+  salvar();
+  atualizar();
 
-    let graus = 3600 + Math.floor(Math.random() * 360);
+  let slot = document.getElementById("slot");
 
-    roleta.style.transform = "rotate(" + graus + "deg)";
+  let intervalo = setInterval(() => {
+    let a = itens[Math.floor(Math.random() * itens.length)];
+    let b = itens[Math.floor(Math.random() * itens.length)];
+    let c = itens[Math.floor(Math.random() * itens.length)];
+    slot.innerText = `${a} ${b} ${c}`;
+  }, 100);
 
-    setTimeout(() => {
-        let resultado = graus % 360;
+  setTimeout(() => {
+    clearInterval(intervalo);
 
-        let ganho = 0;
+    let a = itens[Math.floor(Math.random() * itens.length)];
+    let b = itens[Math.floor(Math.random() * itens.length)];
+    let c = itens[Math.floor(Math.random() * itens.length)];
 
-        if (resultado < 90 || resultado > 270) {
-            ganho = 50;
-            saldo += ganho;
-            document.getElementById("resultado").innerText = "🔴 Vermelho! +R$50";
-        } else {
-            ganho = -30;
-            saldo += ganho;
-            document.getElementById("resultado").innerText = "⚫ Preto! -R$30";
-        }
+    slot.innerText = `${a} ${b} ${c}`;
 
-        document.getElementById("saldo").innerText = saldo;
+    if (a === b && b === c) {
+      let premio = aposta * 5;
+      saldo += premio;
 
-        girando = false;
-    }, 3000);
+      document.getElementById("winSound").play();
+
+      slot.classList.add("win");
+      msg("🎉 JACKPOT +" + premio);
+    } else {
+      msg("😢 Tente novamente");
+    }
+
+    setTimeout(() => slot.classList.remove("win"), 1000);
+
+    salvar();
+    atualizar();
+  }, 2000);
 }
+
+function abrirLoja() {
+  document.getElementById("loja").style.display = "block";
+}
+
+function fecharLoja() {
+  document.getElementById("loja").style.display = "none";
+}
+
+function comprar(qtd) {
+  saldo += qtd;
+  salvar();
+  atualizar();
+  msg("Compra realizada! +" + qtd);
+}
+
+atualizar();
 </script>
 
 </body>
