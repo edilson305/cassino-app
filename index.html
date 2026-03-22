@@ -1,118 +1,34 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Golden Spin</title>
-
-<style>
-body {
-  background: #0B0B0B;
-  color: #FFD700;
-  text-align: center;
-  font-family: Arial;
-}
-
-#slot {
-  font-size: 50px;
-  margin: 20px;
-}
-
-button {
-  padding: 15px;
-  font-size: 18px;
-  margin: 5px;
-}
-
-.win {
-  animation: brilho 0.5s infinite alternate;
-}
-
-@keyframes brilho {
-  from { text-shadow: 0 0 10px gold; }
-  to { text-shadow: 0 0 30px yellow; }
-}
-</style>
+    <title>Cassino Online</title>
 </head>
 
-<body>
+<body style="background:#0b1a0b; color:#00ff88; text-align:center; font-family:Arial;">
 
-<h1>🎰 Golden Spin</h1>
+    <h1>🎰 Cassino Online</h1>
 
-<div id="saldo">Saldo: 100</div>
+    <p>Saldo: R$ <span id="saldo">100</span></p>
 
-<div id="slot">🍒 🍋 🍊</div>
+    <button onclick="jogar()" style="padding:15px; font-size:18px;">
+        🎮 Jogar
+    </button>
 
-<button onclick="girar()">GIRAR</button>
+    <p id="resultado"></p>
 
-<p id="msg"></p>
+    <script>
+        let saldo = 100;
 
-<script>
-let saldo = localStorage.getItem("saldo") || 100;
-saldo = parseInt(saldo);
+        function jogar() {
+            let ganho = Math.floor(Math.random() * 50);
 
-let aposta = 10;
+            saldo += ganho;
 
-let itens = ["🍒","🍋","🍊","💎","7️⃣"];
-
-function atualizar() {
-  document.getElementById("saldo").innerText = "Saldo: " + saldo;
-}
-
-function salvar() {
-  localStorage.setItem("saldo", saldo);
-}
-
-function msg(t) {
-  document.getElementById("msg").innerText = t;
-}
-
-function girar() {
-  if (saldo < aposta) {
-    msg("Sem saldo!");
-    return;
-  }
-
-  saldo -= aposta;
-  salvar();
-  atualizar();
-
-  let slot = document.getElementById("slot");
-
-  let intervalo = setInterval(() => {
-    let a = itens[Math.floor(Math.random() * itens.length)];
-    let b = itens[Math.floor(Math.random() * itens.length)];
-    let c = itens[Math.floor(Math.random() * itens.length)];
-    slot.innerText = `${a} ${b} ${c}`;
-  }, 100);
-
-  setTimeout(() => {
-    clearInterval(intervalo);
-
-    let a = itens[Math.floor(Math.random() * itens.length)];
-    let b = itens[Math.floor(Math.random() * itens.length)];
-    let c = itens[Math.floor(Math.random() * itens.length)];
-
-    slot.innerText = `${a} ${b} ${c}`;
-
-    if (a === b && b === c) {
-      let premio = aposta * 5;
-      saldo += premio;
-      slot.classList.add("win");
-      msg("🎉 JACKPOT +" + premio);
-    } else {
-      msg("😢 Tente novamente");
-    }
-
-    setTimeout(()=> slot.classList.remove("win"), 1000);
-
-    salvar();
-    atualizar();
-
-  }, 2000);
-}
-
-atualizar();
-</script>
+            document.getElementById("saldo").innerText = saldo;
+            document.getElementById("resultado").innerText = 
+                "Você ganhou R$ " + ganho;
+        }
+    </script>
 
 </body>
 </html>
