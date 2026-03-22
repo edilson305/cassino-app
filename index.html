@@ -1,34 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-    <title>Cassino Online</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cassino com Roleta</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: radial-gradient(circle, #0b1a0b, #000);
+    color: white;
+    text-align: center;
+}
+
+header {
+    background: #111;
+    padding: 15px;
+    font-size: 22px;
+    color: #00ff88;
+}
+
+.container {
+    padding: 20px;
+}
+
+.roleta {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    margin: 20px auto;
+    border: 5px solid #00ff88;
+    background: conic-gradient(
+        red 0deg 90deg,
+        black 90deg 180deg,
+        red 180deg 270deg,
+        black 270deg 360deg
+    );
+    transition: transform 3s ease-out;
+}
+
+button {
+    background: #00ff88;
+    border: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.saldo {
+    font-size: 20px;
+}
+
+</style>
 </head>
 
-<body style="background:#0b1a0b; color:#00ff88; text-align:center; font-family:Arial;">
+<body>
 
-    <h1>🎰 Cassino Online</h1>
+<header>🎰 Roleta Cassino</header>
 
-    <p>Saldo: R$ <span id="saldo">100</span></p>
+<div class="container">
 
-    <button onclick="jogar()" style="padding:15px; font-size:18px;">
-        🎮 Jogar
-    </button>
+    <p class="saldo">Saldo: R$ <span id="saldo">100</span></p>
+
+    <div id="roleta" class="roleta"></div>
+
+    <button onclick="girar()">🎡 Girar</button>
 
     <p id="resultado"></p>
 
-    <script>
-        let saldo = 100;
+</div>
 
-        function jogar() {
-            let ganho = Math.floor(Math.random() * 50);
+<script>
+let saldo = 100;
+let girando = false;
 
+function girar() {
+    if (girando) return;
+
+    girando = true;
+
+    let roleta = document.getElementById("roleta");
+
+    let graus = 3600 + Math.floor(Math.random() * 360);
+
+    roleta.style.transform = "rotate(" + graus + "deg)";
+
+    setTimeout(() => {
+        let resultado = graus % 360;
+
+        let ganho = 0;
+
+        if (resultado < 90 || resultado > 270) {
+            ganho = 50;
             saldo += ganho;
-
-            document.getElementById("saldo").innerText = saldo;
-            document.getElementById("resultado").innerText = 
-                "Você ganhou R$ " + ganho;
+            document.getElementById("resultado").innerText = "🔴 Vermelho! +R$50";
+        } else {
+            ganho = -30;
+            saldo += ganho;
+            document.getElementById("resultado").innerText = "⚫ Preto! -R$30";
         }
-    </script>
+
+        document.getElementById("saldo").innerText = saldo;
+
+        girando = false;
+    }, 3000);
+}
+</script>
 
 </body>
 </html>
