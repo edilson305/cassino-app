@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Golden Spin</title>
+
+<style>
+body {
+  background: #0B0B0B;
+  color: #FFD700;
+  text-align: center;
+  font-family: Arial;
+}
+
+#slot {
+  font-size: 50px;
+  margin: 20px;
+}
+
+button {
+  padding: 15px;
+  font-size: 18px;
+  margin: 5px;
+}
+
+.win {
+  animation: brilho 0.5s infinite alternate;
+}
+
+@keyframes brilho {
+  from { text-shadow: 0 0 10px gold; }
+  to { text-shadow: 0 0 30px yellow; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎰 Golden Spin</h1>
+
+<div id="saldo">Saldo: 100</div>
+
+<div id="slot">🍒 🍋 🍊</div>
+
+<button onclick="girar()">GIRAR</button>
+
+<p id="msg"></p>
+
+<script>
+let saldo = localStorage.getItem("saldo") || 100;
+saldo = parseInt(saldo);
+
+let aposta = 10;
+
+let itens = ["🍒","🍋","🍊","💎","7️⃣"];
+
+function atualizar() {
+  document.getElementById("saldo").innerText = "Saldo: " + saldo;
+}
+
+function salvar() {
+  localStorage.setItem("saldo", saldo);
+}
+
+function msg(t) {
+  document.getElementById("msg").innerText = t;
+}
+
+function girar() {
+  if (saldo < aposta) {
+    msg("Sem saldo!");
+    return;
+  }
+
+  saldo -= aposta;
+  salvar();
+  atualizar();
+
+  let slot = document.getElementById("slot");
+
+  let intervalo = setInterval(() => {
+    let a = itens[Math.floor(Math.random() * itens.length)];
+    let b = itens[Math.floor(Math.random() * itens.length)];
+    let c = itens[Math.floor(Math.random() * itens.length)];
+    slot.innerText = `${a} ${b} ${c}`;
+  }, 100);
+
+  setTimeout(() => {
+    clearInterval(intervalo);
+
+    let a = itens[Math.floor(Math.random() * itens.length)];
+    let b = itens[Math.floor(Math.random() * itens.length)];
+    let c = itens[Math.floor(Math.random() * itens.length)];
+
+    slot.innerText = `${a} ${b} ${c}`;
+
+    if (a === b && b === c) {
+      let premio = aposta * 5;
+      saldo += premio;
+      slot.classList.add("win");
+      msg("🎉 JACKPOT +" + premio);
+    } else {
+      msg("😢 Tente novamente");
+    }
+
+    setTimeout(()=> slot.classList.remove("win"), 1000);
+
+    salvar();
+    atualizar();
+
+  }, 2000);
+}
+
+atualizar();
+</script>
+
+</body>
+</html>
