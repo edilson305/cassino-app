@@ -3,58 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cassino App</title>
+<title>Caça-Níquel</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    background: #0b1a0b;
+    background: radial-gradient(circle, #0b1a0b, #000);
     color: white;
+    text-align: center;
 }
 
 header {
     background: #111;
     padding: 15px;
-    text-align: center;
-    color: #00ff88;
     font-size: 22px;
+    color: #00ff88;
 }
 
-.saldo {
-    text-align: center;
-    padding: 10px;
-    font-size: 18px;
-}
-
-.container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 15px;
-}
-
-.card {
-    background: #111;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 0 10px #00ff88;
-    cursor: pointer;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #111;
+.slot {
     display: flex;
-    justify-content: space-around;
-    padding: 10px;
+    justify-content: center;
+    margin: 30px;
+}
+
+.reel {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ff88;
+}
+
+button {
+    padding: 15px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    background: #00ff88;
+    cursor: pointer;
 }
 
 </style>
@@ -62,46 +54,58 @@ footer {
 
 <body>
 
-<header>🎰 Cassino Online</header>
+<header>🎰 Caça-Níquel</header>
 
-<div class="saldo">
-    💰 Saldo: R$ <span id="saldo">100</span>
+<p>Saldo: R$ <span id="saldo">100</span></p>
+
+<div class="slot">
+    <div class="reel" id="r1">🍒</div>
+    <div class="reel" id="r2">🍋</div>
+    <div class="reel" id="r3">⭐</div>
 </div>
 
-<div class="container">
+<button onclick="girar()">🎮 Girar</button>
 
-    <div class="card" onclick="abrirJogo('roleta')">
-        🎡 <br> Roleta
-    </div>
-
-    <div class="card" onclick="abrirJogo('slot')">
-        🎰 <br> Caça-Níquel
-    </div>
-
-    <div class="card">
-        🎲 <br> Dados (em breve)
-    </div>
-
-    <div class="card">
-        🃏 <br> Cartas (em breve)
-    </div>
-
-</div>
-
-<footer>
-    <div>🏠</div>
-    <div>🎮</div>
-    <div>💰</div>
-</footer>
+<p id="resultado"></p>
 
 <script>
-function abrirJogo(jogo) {
-    if (jogo === "roleta") {
-        window.location.href = "roleta.html";
+let saldo = 100;
+let simbolos = ["🍒","🍋","⭐","💎","7️⃣"];
+
+function girar() {
+    if (saldo <= 0) {
+        alert("Sem saldo!");
+        return;
     }
-    if (jogo === "slot") {
-        window.location.href = "slot.html";
-    }
+
+    saldo -= 10;
+
+    let r1 = document.getElementById("r1");
+    let r2 = document.getElementById("r2");
+    let r3 = document.getElementById("r3");
+
+    let spins = 20;
+
+    let interval = setInterval(() => {
+        r1.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+        r2.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+        r3.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+        spins--;
+        
+        if (spins <= 0) {
+            clearInterval(interval);
+
+            if (r1.innerText === r2.innerText && r2.innerText === r3.innerText) {
+                saldo += 100;
+                document.getElementById("resultado").innerText = "🎉 JACKPOT!";
+            } else {
+                document.getElementById("resultado").innerText = "😢 Tente novamente";
+            }
+
+            document.getElementById("saldo").innerText = saldo;
+        }
+
+    }, 100);
 }
 </script>
 
